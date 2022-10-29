@@ -1,3 +1,6 @@
+# this script appends data to the csv file
+csv_file = 'lyrics_1989_2022.csv'
+# make sure file is empty/ non existent before script starts
 import pickle
 import pandas as pd
 from tqdm import tqdm
@@ -9,7 +12,7 @@ genius = lyricsgenius.Genius(token)
 
 df = pd.read_csv('hot100_cleaned_1989.csv')
 df_dict = df.to_dict('records')
-f=open('lyrics_1989_2022.csv', 'a')
+f=open(csv_file, 'a')
 iter = 0
 success = 0
 failed = 0
