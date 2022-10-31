@@ -10,13 +10,17 @@ token = 'BVUCPvV3k4iToDaobKg3khKmDJgFF1-92I5XSTJfvKo9tSCslVtXbV9dddCHyWRe';
 import lyricsgenius
 genius = lyricsgenius.Genius(token)
 
-df = pd.read_csv('song_lyrics.csv')
+df = pd.read_csv('song_lyrics_missing_scraped.csv')
 df_dict = df.to_dict('records')
 iter = 0
 success = 0
 failed = 0
 print(df_dict[0])
+row_count = 0
 for row in tqdm(df_dict):
+    row_count += 1
+    if(row_count<12600):
+        continue
     if(not isinstance(row['Lyrics'], str) and math.isnan(row['Lyrics'])):
         print(f'Success count: {success}, Failure count: {failed}')
         print(row['title'])
@@ -51,9 +55,9 @@ for row in tqdm(df_dict):
     if(success%300==0 and success>0):
         print("writing to csv..")
         dfw = pd.DataFrame.from_dict(df_dict)
-        dfw.to_csv('song_lyrics_missing_scraped.csv', index = False, header=True)
+        dfw.to_csv('song_lyrics_missing_scraped_iter2.csv', index = False, header=True)
 df = pd.DataFrame.from_dict(df_dict)
-df.to_csv('song_lyrics_missing_scraped.csv', index = False, header=True)
+df.to_csv('song_lyrics_missing_scraped_iter2.csv', index = False, header=True)
 with open('df_dict.pkl', 'wb') as file:
     pickle.dump(df_dict, file)
 
