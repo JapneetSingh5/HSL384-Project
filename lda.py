@@ -18,8 +18,10 @@ from gensim.models import LdaModel
 from gensim.models.coherencemodel import CoherenceModel
 import pyLDAvis
 import pyLDAvis.gensim_models as gensimvis
+import datetime
 
 csv.field_size_limit(sys.maxsize)
+
 
 
 def get_df(filename):
@@ -146,7 +148,7 @@ def visualise(lda_model,params,dictionary,filename):
     
     vis_data = gensimvis.prepare(lda_model, params["gensim_corpus"], dictionary)
     #pyLDAvis.display(vis_data)
-    pyLDAvis.save_html(vis_data, f'./Lyrics_LDA_k_{filename}_'+ str(params["num_topics"]) +'.html')
+    pyLDAvis.save_html(vis_data, f'./Lyrics_LDA_k_{filename}_'+ str(params["num_topics"]) +'_'+str(params["chunksize"]) + '_final.html')
 
 def bifurcate_df(df, param):
 
@@ -175,7 +177,7 @@ def get_topic_back(gensim_corpus, lda):
 
 if __name__ == "__main__":
 
-    FILENAME = "comprehensive.csv"
+    FILENAME = "filtered_comprehensive.csv"
     df = get_df(FILENAME)
 
     # remove any row with lyrics and gender NA
@@ -184,6 +186,8 @@ if __name__ == "__main__":
     print("Tokenising lyrics")
     # get tokens
     df = tokenize_lyrics(df)
+
+    # df.to_csv('tokenised_comprehensive.csv')
 
     print("Creating dictionary")
     # get all tokenss
@@ -199,9 +203,9 @@ if __name__ == "__main__":
     params = {
         "gensim_corpus": gensim_corpus,
         "id2word": id2word,
-        "chunksize": 2000,
-        "iterations": 400,
-        "num_topics": 6,
+        "chunksize": 1000,
+        "iterations": 600,
+        "num_topics": 4,
         "passes": 20
     }
 
@@ -220,4 +224,6 @@ if __name__ == "__main__":
     df["topic"] = topics
 
     # Save csv
-    df.to_csv("test.csv")
+
+    df.to_csv(f'topics_'+ str(params["num_topics"]) +'_'+str(params["chunksize"]) + '_final.html')
+    df[['title_x','artist_x','year_x','topic','unique_tokens']].to_csv(f'compact_song_topics_'+ str(params["num_topics"]) +'_'+str(params["chunksize"]) + '_final.html')
